@@ -2,7 +2,7 @@
 
 ![Alt text](http://fmad.io/analytics/logo_capmerge.png "fmadio flow analyzer logo")
 
-pcap_merge is a high performance PCAP merging utiltity based on `mmap`, that merges the input PCAPs in time order outputing a nanosecond PCAP. What makes this different from wireshark mergecap is its performance. You can merge 200GBs worth of pcaps in 10 minutes or less, bound by the raw DiskIO bandwidth. 
+pcap_merge is a high performance PCAP merging utiltity based on `mmap`, that merges the input PCAPs in time order outputing a nanosecond PCAP. What makes this different from wireshark mergecap is its performance. You can merge 100GB worth of pcaps in 5 minutes or less, bound entirely by raw DiskIO bandwidth.
 
 ###Options
 
