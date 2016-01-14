@@ -1,8 +1,8 @@
-# capmerge2
+# pcap_merge 
 
 ![Alt text](http://fmad.io/analytics/logo_capmerge.png "fmadio flow analyzer logo")
 
-capmerge2 is a high performance PCAP merging utiltity based on mmap, that merges the input PCAP`s in time order outputing a nanosecond PCAP. What makes this different from wireshark mergecap is its performance. You can merge 200GB`s worth of pcap`s in 10 minutes or less, bound by the raw DiskIO bandwidth. 
+pcap_merge is a high performance PCAP merging utiltity based on mmap, that merges the input PCAPs in time order outputing a nanosecond PCAP. What makes this different from wireshark mergecap is its performance. You can merge 200GB`s worth of pcap`s in 10 minutes or less, bound by the raw DiskIO bandwidth. 
 
 ###Options
 
@@ -12,9 +12,9 @@ Command line options
 -o <filename>                              | location of output pcap file 
 ```
 
-###Options
+###Example
 ```
-$ ./capmerge2  -o output.pcap  input_20160114_0000.pcap input_20160114_0100.pcap input_20160114_0200.pcap input_20160114_0300.pcap 
+$ ./pcap_merge  -o output.pcap  input_20160114_0000.pcap input_20160114_0100.pcap input_20160114_0200.pcap input_20160114_0300.pcap 
 calibrating...
 0 : 00000000d09dae93           3.5000 cycles/nsec
 Cycles/Sec 3499994771.0000 Std:       0cycle std(  0.00000000)
