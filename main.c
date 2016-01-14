@@ -131,6 +131,7 @@ int main(int argc, char* argv[])
 	{
 		InputFile_t* InFile  = &InFileList[i];
 
+
 		InFile->Valid 		= false; 
 
 		struct stat Stat;	
@@ -143,6 +144,8 @@ int main(int argc, char* argv[])
 			printf("failed to open file [%s]\n", InFile->FileName);
 			continue;
 		}
+
+		printf("Input [%s] %10.3fGB\n", InFile->FileName, InFile->FileLength / 1e9);
 
 		// map the entire thing
 		InFile->MapLength = (Stat.st_size + 1024*1024) & (~(1024*1024-1));	// 1MB round
@@ -168,7 +171,8 @@ int main(int argc, char* argv[])
 			assert(false);
 		}
 
-		InFile->Valid = true;
+		InFile->Valid 		= true;
+		InFile->BufferValid = false;
 		InFile->MapPos = sizeof(PCAPHeader_t);
 		TotalInputBytes += InFile->FileLength;
 	}
@@ -201,7 +205,7 @@ int main(int argc, char* argv[])
 		{
 			InputFile_t* InFile  = &InFileList[i];
 
-			if (InFile->Valid) continue;
+			if (!InFile->Valid) continue;
 			if (InFile->BufferValid) continue;
 
 			if (InFile->MapPos >= InFile->FileLength)
@@ -216,8 +220,9 @@ int main(int argc, char* argv[])
 			// generate TS
 			InFile->BufferTS = Packet->Sec * 1e9 + Packet->NSec * InFile->TSScale;
 
-			InFile->MapPos += sizeof(PCAPPacket_t);
-			InFile->MapPos += Packet->LengthCapture; 
+			InFile->MapPos 		+= sizeof(PCAPPacket_t);
+			InFile->MapPos 		+= Packet->LengthCapture; 
+			InFile->BufferValid = true;
 		}
 
 		// find oldest
@@ -226,6 +231,7 @@ int main(int argc, char* argv[])
 		for (int i=0; i < InFileCnt; i++)
 		{
 			if (!InFileList[i].Valid) continue;
+			if (!InFileList[i].BufferValid) continue;
 
 			if (InFileList[i].BufferTS < TS)
 			{
@@ -237,7 +243,7 @@ int main(int argc, char* argv[])
 
 		// output
 		InputFile_t* InFile = &InFileList[Index];
-		PCAPPacket_t* Packet = (PCAPPacket_t*)InFile->Buffer;
+		PCAPPacket_t* Packet = (PCAPPacket_t*)(InFile->Map + InFile->MapPos);
 		wlen = fwrite(Packet, sizeof(PCAPPacket_t) + Packet->LengthCapture, 1, OutFile); 
 		if (wlen != 1)
 		{
@@ -258,12 +264,17 @@ int main(int argc, char* argv[])
 
 			double ETA = ((TotalInputBytes * 8.0) / Bps) - dT;
 
-			printf("[%.4f %%] %.3fGB %.6fGbps Elapsed:%f Min ETA:%2.f Min\n", TotalBytes / (double)TotalInputBytes, TotalBytes / 1e9, Bps / 1e9, dT/60, ETA / 60);
+			printf("[%.4f %%] %.3fGB %.6fGbps Elapsed:%f Min ETA:%2.f Min | ", TotalBytes / (double)TotalInputBytes, TotalBytes / 1e9, Bps / 1e9, dT/60, ETA / 60);
+			for (int i=0; i < InFileCnt; i++)
+			{
+				printf("%.3fGB ", InFileList[i].MapPos / 1e9);
+			}
+			printf("\n");
 		}
 	}
 
 	// cleanup
-
+	printf("Closing\n");
 	for (int i=0; i < InFileCnt; i++)
 	{
 		InputFile_t* InFile  = &InFileList[i];
