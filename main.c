@@ -239,7 +239,8 @@ int main(int argc, char* argv[])
 				Index 	= i;
 			}
 		}
-		assert(Index != -1);
+		// all streams finished
+		if (Index == -1) break;
 
 		// output
 		InputFile_t* InFile = &InFileList[Index];
