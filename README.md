@@ -36,4 +36,8 @@ Cycles/Sec 3499994771.0000 Std:       0cycle std(  0.00000000)
 	[0.0178 %] 4.225GB 2.248609Gbps Elapsed:0.250500 Min ETA:14 Min
 	[0.0189 %] 4.486GB 2.238679Gbps Elapsed:0.267167 Min ETA:14 Min
 ```
+### Support 
 
+This tool is part of the FMADIO **10Gbe/40Gbe/100 Gbe packet capture device**, more information can be found at http://fmad.io 
+
+Contact us for any bugs/patches/requests send a mail to: support at fmad.io 
