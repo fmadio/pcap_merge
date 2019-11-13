@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 		}
 		else if (argv[i][0] != '-')
 		{
-			InFileList[InFileCnt++].FileName = argv[i];
+			InFileList[InFileCnt++].FileName = strdup(argv[i]);
 			if (InFileCnt > 2048)
 			{
 				printf("too many input files\n");
