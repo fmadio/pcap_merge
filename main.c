@@ -114,6 +114,32 @@ int main(int argc, char* argv[])
 			OutFileName = argv[i+1];
 			i++;
 		}
+		else if (strcmp(argv[i], "--input") == 0)
+		{
+			FILE* F = fopen(argv[i + 1], "r");
+			assert(F != NULL);
+
+			u8 FileName[1024];
+			u32 FileNamePos = 0;
+			while (!feof(F))
+			{
+				int c = fgetc(F);	
+				if (c == '\n')
+				{
+					FileName[FileNamePos] = 0;
+					printf("[%s]\n", FileName);
+
+					InFileList[InFileCnt++].FileName = strdup(FileName);
+
+					FileNamePos = 0;
+				}
+				else
+				{
+					FileName[FileNamePos++] = c;
+				}
+			}
+			i++;
+		}
 		else if (argv[i][0] != '-')
 		{
 			InFileList[InFileCnt++].FileName = strdup(argv[i]);
