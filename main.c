@@ -37,6 +37,8 @@ typedef struct
 	u64			MapLength;
 	u64			MapPos;
 
+	u64			BufferPos;
+
 	u8*			Buffer;
 	bool		BufferValid;
 	u64			BufferTS;
@@ -197,6 +199,7 @@ int main(int argc, char* argv[])
 			assert(false);
 		}
 
+		InFile->BufferPos 	= sizeof(PCAPHeader_t);
 		InFile->Valid 		= true;
 		InFile->BufferValid = false;
 		InFile->MapPos = sizeof(PCAPHeader_t);
@@ -270,13 +273,20 @@ int main(int argc, char* argv[])
 
 		// output
 		InputFile_t* InFile = &InFileList[Index];
-		PCAPPacket_t* Packet = (PCAPPacket_t*)(InFile->Map + InFile->MapPos);
+
+		PCAPPacket_t* Packet = (PCAPPacket_t*)(InFile->Map + InFile->BufferPos);
 		wlen = fwrite(Packet, sizeof(PCAPPacket_t) + Packet->LengthCapture, 1, OutFile); 
 		if (wlen != 1)
 		{
 			printf("write failed\n");
 			break;
 		}
+
+		InFile->BufferPos += sizeof(PCAPPacket_t);
+		InFile->BufferPos += Packet->LengthCapture; 
+
+		assert(Packet->LengthCapture > 0);
+		assert(Packet->LengthCapture < 16*1024);
 
 		InFile->BufferValid = false;
 		TotalBytes += Packet->LengthCapture + sizeof(PCAPPacket_t);
